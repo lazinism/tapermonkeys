@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         치지직-트위치 채팅연동
 // @namespace    http://nokduro.com/
-// @version      2023-12-29-01
+// @version      2023-12-29-02
 // @description  트위치 채팅을 치지직에서도!
 // @author       귀챠니즘
 // @match        https://chzzk.naver.com/live/*?twitch=*
