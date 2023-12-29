@@ -9,6 +9,8 @@
 // @grant        none
 // ==/UserScript==
 
+// 수정: RlaChi
+
 function launchWS(){
     let params = new URLSearchParams(window.location.search);
     let channelId = params.get('twitch');
@@ -22,12 +24,13 @@ function launchWS(){
         if(message.startsWith("PING")) ws.send('PONG');
         else if(message.startsWith("PONG")) ws.send('PING');
         else if(!message.startsWith(':tmi.twitch.tv') && message.startsWith("@badge-info=")){
+            let co = message.split(';color=')[1].split(';')[0];
             let a = message.split(';display-name=');
             let b = message.match(/emotes=([^;]+)/);
             let nick = a[1].split(';')[0];
             let usermessage = a[1].split('PRIVMSG #'+channelId+' :')[1];
             let extra = b?b[1]:null
-            appendMessage({nick: nick, message: usermessage, extra: extra});
+            appendMessage({nick: nick, color: co, message: usermessage, extra: extra});
         }
     });
     ws.addEventListener('close', ()=>{
@@ -53,7 +56,6 @@ function removeElementsOverLimit(parentElement, query) {
 }
 
 function appendMessage(messageDict){
-    // 수정: RlaChi
     let message = messageDict.message;
     let chatboxdiv = document.querySelector('aside');
     chatboxdiv = chatboxdiv.children[chatboxdiv.childElementCount - 2].children[0];
@@ -84,7 +86,7 @@ function appendMessage(messageDict){
     user_badge_span.src = 'https://static.twitchcdn.net/assets/favicon-32-e29e246c157142c94346.png'
     user_badge_span.style.cssText = 'width: 18px; height: 18px; margin-right: 5px;'
     username_span.innerText = messageDict.nick;
-    username_span.style.cssText = `color: ${randColor()}`;
+    username_span.style.cssText = `color: ${messageDict.color}`;
     username_container_span.appendChild(user_badge_span);
     username_container_span.appendChild(username_span);
     message_wrapper.style.cssText = wrapperStyle;
