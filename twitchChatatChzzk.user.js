@@ -36,7 +36,7 @@ function launchWS(){
     return ws;
 }
 
-const randGreen = () => `rgb(${Math.floor(Math.random() * 100)}, ${Math.floor(Math.random() * 150) + 100}, ${Math.floor(Math.random() * 100)})`;
+const randColor = () => `rgb(${Math.floor(Math.random() * 100) + 100}, ${Math.floor(Math.random() * 50)}, ${Math.floor(Math.random() * 150) + 100})`;
 
 const imageStyle = 'height:24px;margin:-2px 0 -2px 1px; width:24px;';
 const wrapperStyle = 'color: #dfe2ea;line-height: 20px;padding: 4px 8px 4px 6px;text-align:left;overflow-wrap:anywhere;word-break:break-all;';
@@ -79,7 +79,7 @@ function appendMessage(messageDict){
     message_span.innerHTML = message;
     username_container_span.style.cssText = usernameContainerStyle;
     username_span.innerText = messageDict.nick;
-    username_span.style.cssText = `color: ${randGreen()}`;
+    username_span.style.cssText = `color: ${randColor()}`;
     username_container_span.appendChild(username_span);
     message_wrapper.style.cssText = wrapperStyle;
     message_wrapper.appendChild(username_container_span);message_wrapper.appendChild(message_span);
