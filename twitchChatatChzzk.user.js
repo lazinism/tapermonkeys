@@ -41,7 +41,7 @@ const randGreen = () => `rgb(${Math.floor(Math.random() * 100)}, ${Math.floor(Ma
 const imageStyle = 'height:24px;margin:-2px 0 -2px 1px; width:24px;';
 const wrapperStyle = 'color: #dfe2ea;line-height: 20px;padding: 4px 8px 4px 6px;text-align:left;overflow-wrap:anywhere;word-break:break-all;';
 const containerStyle = 'color: #fff;font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", Helvetica, Arial, NanumGothic, 나눔고딕, "Malgun Gothic", "맑은 고딕", Dotum, 굴림, gulim, 새굴림, "noto sans", 돋움, sans-serif;font-size: 14px;text-rendering: auto; color: buttontext; letter-spacing: normal;word-spacing: normal;line-height: normal;text-transform: none;text-indent: 0px;text-shadow: none;text-align: center;cursor: default;';
-const usernameContainerStyle = 'line-height: 18px;margin: -2px 0;padding: 2px 4px 2px 2px;position: relative;display: inline-block;line-break: anywhere;'
+const usernameContainerStyle = 'line-height: 18px;margin: -2px 0;padding: 2px 4px 2px 2px;position: relative;display: inline-block;line-break: anywhere;font-weight: 500;'
 
 function removeElementsOverLimit(parentElement, query) {
   const childrenToRemove = document.querySelectorAll(query);
