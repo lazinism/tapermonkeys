@@ -2,7 +2,7 @@
 // @name         Chzzk 일시정지시 플레이버튼
 // @namespace    http://nokduro.com/
 // @version      2023-12-29
-// @description  일시정지 시 누르면 플레이 가능한 버튼 보이게
+// @description  일시정지 시 화면을 눌러 재생
 // @author       귀챠니즘
 // @match        https://chzzk.naver.com/live/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=naver.com
