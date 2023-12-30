@@ -25,9 +25,10 @@ function launchWS(){
             let a = message.split(';display-name=');
             let b = message.match(/emotes=([^;]+)/);
             let nick = a[1].split(';')[0];
+            let cr = getColorFromNick(nick);
             let usermessage = a[1].split('PRIVMSG #'+channelId+' :')[1];
             let extra = b?b[1]:null
-            appendMessage({nick: nick, message: usermessage, extra: extra});
+            appendMessage({nick: nick, color: cr, message: usermessage, extra: extra});
         }
     });
     ws.addEventListener('close', ()=>{
@@ -36,12 +37,37 @@ function launchWS(){
     return ws;
 }
 
-const randColor = () => `rgb(${Math.floor(Math.random() * 100) + 100}, ${Math.floor(Math.random() * 50)}, ${Math.floor(Math.random() * 150) + 100})`;
+const randColor = () => `rgb(${Math.floor(Math.random() * 64) + 96}, ${Math.floor(Math.random() * 64) + 32}, ${Math.floor(Math.random() * 64) + 160})`;
 
 const imageStyle = 'height:24px;margin:-2px 0 -2px 1px; width:24px;';
 const wrapperStyle = 'color: #dfe2ea;line-height: 20px;padding: 4px 8px 4px 6px;text-align:left;overflow-wrap:anywhere;word-break:break-all;';
 const containerStyle = 'color: #fff;font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", Helvetica, Arial, NanumGothic, 나눔고딕, "Malgun Gothic", "맑은 고딕", Dotum, 굴림, gulim, 새굴림, "noto sans", 돋움, sans-serif;font-size: 14px;text-rendering: auto; color: buttontext; letter-spacing: normal;word-spacing: normal;line-height: normal;text-transform: none;text-indent: 0px;text-shadow: none;text-align: center;cursor: default;';
 const usernameContainerStyle = 'line-height: 18px;margin: -2px 0;padding: 2px 4px 2px 2px;position: relative;display: inline-block;line-break: anywhere;font-weight: 500;'
+
+function hash(str) {
+    // https://www.grepper.com/answers/353455/javascript+simple+hash?ucard=1
+    var h = 0;
+    if (this.length == 0) {
+        return h;
+    }
+    for (var i = 0; i < str.length; i++) {
+        var char = str.charCodeAt(i);
+        h = ((h<<5)-h)+char;
+        h = h & h; // Convert to 32bit integer
+    }
+    return h;
+}
+
+function getColorFromNick(nick) {
+    let h = Math.abs(hash("hashhash"+nick));
+    let b = h%64;
+    h = Math.floor(h/64);
+    let g = h%64;
+    h = Math.floor(h/64);
+    let r = h%64;
+    let col = `rgb(${r + 96}, ${g + 32}, ${b + 160})`;
+    return col;
+}
 
 function removeElementsOverLimit(parentElement, query) {
   const childrenToRemove = document.querySelectorAll(query);
@@ -53,12 +79,15 @@ function removeElementsOverLimit(parentElement, query) {
 }
 
 function appendMessage(messageDict){
+    // 수정: RlaChi
     let message = messageDict.message;
-    let chatboxdiv = document.querySelector('aside').children[1].children[0];
+    let chatboxdiv = document.querySelector('aside');
+    chatboxdiv = chatboxdiv.children[chatboxdiv.childElementCount - 2].children[0];
     let list_item = document.createElement('div');
     let message_container = document.createElement('div');
     let message_wrapper = document.createElement('div');
     let username_container_span = document.createElement('span');
+    let user_badge_span = document.createElement('img');
     let username_span = document.createElement('span');
     let message_span = document.createElement('span');
     if(messageDict.extra){
@@ -78,8 +107,11 @@ function appendMessage(messageDict){
     }
     message_span.innerHTML = message;
     username_container_span.style.cssText = usernameContainerStyle;
+    user_badge_span.src = 'https://static.twitchcdn.net/assets/favicon-32-e29e246c157142c94346.png'
+    user_badge_span.style.cssText = 'width: 18px; height: 18px; margin-right: 5px;'
     username_span.innerText = messageDict.nick;
-    username_span.style.cssText = `color: ${randColor()}`;
+    username_span.style.cssText = `color: ${messageDict.color}`;
+    username_container_span.appendChild(user_badge_span);
     username_container_span.appendChild(username_span);
     message_wrapper.style.cssText = wrapperStyle;
     message_wrapper.appendChild(username_container_span);message_wrapper.appendChild(message_span);
@@ -89,11 +121,11 @@ function appendMessage(messageDict){
     list_item.classList.add('twitchChat');
     let lastChild = chatboxdiv.lastElementChild;
     chatboxdiv.insertBefore(list_item, lastChild);
-    chatboxdiv.addEventListener('DOMNodeInserted', ()=>{
+    /* chatboxdiv.addEventListener('DOMNodeInserted', ()=>{
        if(document.querySelectorAll('.twitchChat').length > 200){
            removeElementsOverLimit(chatboxdiv, '.twitchChat');
        }
-    });
+    }); */
 }
 
 (async function() {
