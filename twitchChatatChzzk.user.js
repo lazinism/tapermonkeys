@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         치지직-트위치 채팅연동
 // @namespace    http://nokduro.com/
-// @version      2023-12-30-01
+// @version      2023-12-29-02
 // @description  트위치 채팅을 치지직에서도!
 // @author       귀챠니즘
 // @match        https://chzzk.naver.com/live/*?twitch=*
@@ -37,6 +37,8 @@ function launchWS(){
     return ws;
 }
 
+const randColor = () => `rgb(${Math.floor(Math.random() * 64) + 96}, ${Math.floor(Math.random() * 64) + 32}, ${Math.floor(Math.random() * 64) + 160})`;
+
 const imageStyle = 'height:24px;margin:-2px 0 -2px 1px; width:24px;';
 const wrapperStyle = 'color: #dfe2ea;line-height: 20px;padding: 4px 8px 4px 6px;text-align:left;overflow-wrap:anywhere;word-break:break-all;';
 const containerStyle = 'color: #fff;font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", Helvetica, Arial, NanumGothic, 나눔고딕, "Malgun Gothic", "맑은 고딕", Dotum, 굴림, gulim, 새굴림, "noto sans", 돋움, sans-serif;font-size: 14px;text-rendering: auto; color: buttontext; letter-spacing: normal;word-spacing: normal;line-height: normal;text-transform: none;text-indent: 0px;text-shadow: none;text-align: center;cursor: default;';
@@ -45,7 +47,7 @@ const usernameContainerStyle = 'line-height: 18px;margin: -2px 0;padding: 2px 4p
 function hash(str) {
     // https://www.grepper.com/answers/353455/javascript+simple+hash?ucard=1
     var h = 0;
-    if (this.length == 0) {
+    if (str.length == 0) {
         return h;
     }
     for (var i = 0; i < str.length; i++) {
