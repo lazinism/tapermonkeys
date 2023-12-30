@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         치지직-트위치 채팅연동
 // @namespace    http://nokduro.com/
-// @version      2023-12-30-01
+// @version      2023-12-30-02
 // @description  트위치 채팅을 치지직에서도!
 // @author       귀챠니즘
 // @match        https://chzzk.naver.com/live/*?twitch=*
@@ -45,7 +45,7 @@ const usernameContainerStyle = 'line-height: 18px;margin: -2px 0;padding: 2px 4p
 function hash(str) {
     // https://www.grepper.com/answers/353455/javascript+simple+hash?ucard=1
     var h = 0;
-    if (this.length == 0) {
+    if (str.length == 0) {
         return h;
     }
     for (var i = 0; i < str.length; i++) {
