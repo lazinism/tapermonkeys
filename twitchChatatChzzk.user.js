@@ -68,12 +68,15 @@ function getColorFromNick(nick) {
 }
 
 function removeElementsOverLimit(parentElement, query) {
-  const childrenToRemove = document.querySelectorAll(query);
-  childrenToRemove.forEach(child => {
-    if (child.parentElement === parentElement) {
-      parentElement.removeChild(child);
+    let childrenToRemove = document.querySelectorAll(query);
+    let count = document.querySelectorAll(query).length;
+    for (let i = 0; i < childrenToRemove.length; i++) {
+        if (count<=200) break;
+        if (childrenToRemove[i].parentElement === parentElement) {
+            parentElement.removeChild(childrenToRemove[i]);
+            count--;
+        }
     }
-  });
 }
 
 function appendMessage(messageDict){
@@ -119,11 +122,7 @@ function appendMessage(messageDict){
     list_item.classList.add('twitchChat');
     let lastChild = chatboxdiv.lastElementChild;
     chatboxdiv.insertBefore(list_item, lastChild);
-    /* chatboxdiv.addEventListener('DOMNodeInserted', ()=>{
-       if(document.querySelectorAll('.twitchChat').length > 200){
-           removeElementsOverLimit(chatboxdiv, '.twitchChat');
-       }
-    }); */
+    removeElementsOverLimit(chatboxdiv, '.twitchChat');
 }
 
 (async function() {
