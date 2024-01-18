@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Chzzk 일시정지시 플레이버튼
 // @namespace    http://nokduro.com/
-// @version      2023-12-29
+// @version      2024-01-19
 // @description  일시정지 시 화면을 눌러 재생
 // @author       귀챠니즘
 // @match        https://chzzk.naver.com/live/*
@@ -37,7 +37,7 @@ function applyStyles(element, styles) {
                 color: 'white'
             }
             applyStyles(buttonoverlay, buttonoverlayStyle);
-            let video = document.querySelector('.webplayer-internal-video');
+            let playbtn = document.querySelector('button.pzp-pc-ui-button.pzp-pc-ui-button--clicked');
             let videoContainer = document.getElementById('live_player_layout');
             videoContainer.appendChild(buttonoverlay);
             video.addEventListener('pause', function(){
@@ -47,7 +47,7 @@ function applyStyles(element, styles) {
                 buttonoverlay.style.visibility = 'hidden';
             });
             buttonoverlay.addEventListener('click', function(){
-                video.play();
+                playbtn.click();
             });
         }
     }, 100)
