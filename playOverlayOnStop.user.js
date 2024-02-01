@@ -47,7 +47,7 @@ function applyStyles(element, styles) {
                 buttonoverlay.style.visibility = 'hidden';
             });
             buttonoverlay.addEventListener('click', function(){
-                document.querySelector('button.pzp-button.pzp-pc-playback-switch.pzp-pc__playback-switch.pzp-pc-ui-button.pzp-pc-ui-button--clicked').click();
+                document.querySelector('div.pzp-pc__bottom-buttons-left>button').click();
             });
         }
     }, 100)
