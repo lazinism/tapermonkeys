@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Chzzk 일시정지시 플레이버튼
 // @namespace    http://nokduro.com/
-// @version      2024-01-19-03
+// @version      2024-02-01-01
 // @description  일시정지 시 화면을 눌러 재생
 // @author       귀챠니즘
 // @match        https://chzzk.naver.com/live/*
