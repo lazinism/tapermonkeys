@@ -1,61 +1,91 @@
 // ==UserScript==
-// @name         네이버 카페 방문 페이지 회색표시하기 (일주일 기록 유지)
+// @name         네이버 카페 방문 페이지 회색표시하기 (commentFocus 제외)
 // @namespace    http://nokduro.com/
-// @version      2025-01-06.2
-// @description  '이미 방문한 페이지'를 articleid 기준으로 회색(#ccc)으로 표시하며, 일주일이 지난 기록은 삭제합니다.
+// @version      2025-01-08.2
+// @description  네이버 카페 방문 페이지를 clubid와 articleid 기준으로 회색(#ccc)으로 표시하며, 1주일 이후 자동 삭제됩니다. commentFocus=true는 제외합니다.
 // @author       귀챠니즘
-// @match        https://cafe.naver.com/MyCafeIntro.nhn*
-// @match        https://cafe.naver.com/ArticleList.nhn*
-// @match        https://cafe.naver.com/ca-fe/cafes/*
-// @match        https://cafe.naver.com/ArticleRead.nhn*
+// @match        https://cafe.naver.com/*
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=naver.com
 // @run-at       document-end
 // @grant        none
 // ==/UserScript==
 
-(function() {
+(function () {
     'use strict';
 
     const ONE_WEEK_MS = 7 * 24 * 60 * 60 * 1000; // 일주일 (밀리초 단위)
     const STORAGE_KEY = 'visitedArticlesWithTimestamps';
 
-    // URL에서 articleid 추출 함수
-    function getArticleIdFromUrl(url) {
+    // URL에서 clubid와 articleid 추출
+    function getClubAndArticleIdFromUrl(url) {
         const params = new URL(url).searchParams;
-        return params.get('articleid');
+        const clubid = params.get('clubid');
+        const articleid = params.get('articleid');
+        const commentFocus = params.get('commentFocus');
+        if (clubid && articleid && !commentFocus) {
+            return `${clubid}_${articleid}`; // clubid와 articleid 조합
+        }
+        return null;
     }
 
-    // 현재 시간 (밀리초)
-    const now = Date.now();
+    // 로컬 스토리지에서 오래된 기록 삭제
+    function cleanUpOldRecords() {
+        const now = Date.now();
+        let visitedArticles = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+        visitedArticles = visitedArticles.filter(record => now - record.timestamp <= ONE_WEEK_MS);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(visitedArticles));
+    }
 
-    // 로컬 스토리지에서 방문 기록 불러오기
-    let visitedArticles = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+    // 현재 방문한 게시글을 기록에 추가
+    function addCurrentArticleToVisited() {
+        const now = Date.now();
+        const currentKey = getClubAndArticleIdFromUrl(location.href);
 
-    // 오래된 기록 삭제
-    visitedArticles = visitedArticles.filter(record => {
-        return now - record.timestamp <= ONE_WEEK_MS; // 일주일 이내의 기록만 유지
-    });
-
-    // 현재 URL의 articleid 가져오기
-    const currentArticleId = getArticleIdFromUrl(window.location.href);
-
-    if (currentArticleId) {
-        // 방문 기록에 현재 articleid 추가 (중복 방지)
-        if (!visitedArticles.some(record => record.articleid === currentArticleId)) {
-            visitedArticles.push({ articleid: currentArticleId, timestamp: now });
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(visitedArticles));
+        if (currentKey) {
+            let visitedArticles = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+            if (!visitedArticles.some(record => record.key === currentKey)) {
+                visitedArticles.push({ key: currentKey, timestamp: now });
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(visitedArticles));
+            }
         }
     }
 
-    // 모든 링크에서 articleid를 기준으로 방문 여부 확인 후 스타일 적용
-    const links = document.querySelectorAll('a[href*="articleid="]');
-    links.forEach(link => {
-        const linkArticleId = getArticleIdFromUrl(link.href);
-        if (visitedArticles.some(record => record.articleid === linkArticleId)) {
-            link.style.color = '#ccc'; // 회색 적용
-        }
-    });
+    // 방문 기록을 기반으로 링크 스타일 변경
+    function updateVisitedLinkStyles() {
+        const visitedArticles = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+        const links = document.querySelectorAll('a[href*="articleid="]');
 
-    // 로컬 스토리지 업데이트 (오래된 기록 삭제 적용)
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(visitedArticles));
+        links.forEach(link => {
+            const linkKey = getClubAndArticleIdFromUrl(link.href);
+            if (linkKey && visitedArticles.some(record => record.key === linkKey)) {
+                link.style.color = '#ccc'; // 회색으로 표시
+            }
+        });
+    }
+
+    // 스크립트 초기화
+    function initializeScript() {
+        cleanUpOldRecords(); // 오래된 기록 삭제
+        addCurrentArticleToVisited(); // 현재 페이지를 방문 기록에 추가
+        updateVisitedLinkStyles(); // 방문 기록 기반 스타일 업데이트
+    }
+
+    // SPA 방식의 URL 변경 감지 (history API 감지)
+    const originalPushState = history.pushState;
+    const originalReplaceState = history.replaceState;
+
+    history.pushState = function (...args) {
+        originalPushState.apply(this, args);
+        setTimeout(initializeScript, 0); // URL 변경 후 초기화
+    };
+
+    history.replaceState = function (...args) {
+        originalReplaceState.apply(this, args);
+        setTimeout(initializeScript, 0); // URL 변경 후 초기화
+    };
+
+    window.addEventListener('popstate', initializeScript); // 뒤로가기/앞으로가기 이벤트 감지
+
+    // 초기 실행
+    initializeScript();
 })();
