@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name         네이버 카페 방문 페이지 회색표시하기 (commentFocus 제외)
+// @name         네이버 카페 방문 페이지 회색표시하기
 // @namespace    http://nokduro.com/
 // @version      2025-01-08.2
 // @description  네이버 카페 방문 페이지를 clubid와 articleid 기준으로 회색(#ccc)으로 표시하며, 1주일 이후 자동 삭제됩니다. commentFocus=true는 제외합니다.
